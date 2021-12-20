@@ -1,0 +1,15 @@
+name = "SellmeierFit"
+uuid = "cb4c0f5c-2214-40eb-8da0-53ca8e9a3192"
+authors = ["Wonseok Shin <wsshin97@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
+
+[compat]
+julia = "^1"
