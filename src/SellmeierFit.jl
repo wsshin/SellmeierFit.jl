@@ -6,6 +6,7 @@ using AbbreviatedTypes
 using SimpleConstants
 
 include("util.jl")
+include("model.jl")
 include("fit.jl")
 
 end # module

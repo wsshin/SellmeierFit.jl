@@ -1,13 +1,13 @@
-export sellmeier_model, fit_sellmeier
+export fit_sellmeier
 
 const GUESS_MARGIN = 0.05
 
-sellmeier_model(λ::Real, B::AbsVecReal, C::AbsVecReal) =
-    1.0 + mapreduce((Bᵢ,Cᵢ) -> Bᵢ * λ^2 / (λ^2 - Cᵢ^2), +, B, C)  # ε
+fit_sellmeier(λ, ε, N::Integer) = fit_sellmeier(λ, ε, Val(N))
 
 function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
                        ε::AbsVecFloat,  # measured relative permittivities (= squared refractive indices)
-                       N::Integer)  # number of terms in Sellmeier model
+                       ::Val{N}  # number of terms in Sellmeier model
+                       ) where {N}
     Nλ = length(λ)
 
     # Normaize λ.
@@ -16,11 +16,12 @@ function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
     λnorm = λ ./ λ₀
 
     err_min = Inf
-    B, C = zeros(N), zeros(N)
+    B = @MVector zeros(N)
+    C = @MVector zeros(N)
     for Nₙ = 0:N
         Nₚ = N - Nₙ
         fit = fit_sellmeier_impl(λnorm, ε, Nₙ, Nₚ)
-        err = sqrt(sum(abs2, fit.resid) / Nλ)
+        err = sqrt(sum(abs2, fit.resid) / Nλ)  # RMS error
         if err < err_min
             B .= @view(fit.param[1:N])  # entries of B are dimensionless, so no need to unnormalize them
             C .= @view(fit.param[N+1:2N]) .* λ₀  # entries of C are wavelengths, so unnormalize them
@@ -28,7 +29,9 @@ function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
         end
     end
 
-    return (B=B, C=C, err=err_min)
+    sm = SellmeierModel(SVec(B), SVec(C))
+    
+    return (mdl=sm, err=err_min)
 end
 
 function fit_sellmeier_impl(λnorm::AbsVecFloat, ε::AbsVecFloat,
