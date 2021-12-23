@@ -6,7 +6,7 @@ fit_sellmeier(λ, ε, N::Integer) = fit_sellmeier(λ, ε, Val(N))
 
 function has_similar(C::AbsVecReal)  # assume C is sorted
     for i = 1:length(C)-1
-        C[i]≈C[i+1] && return true
+        isapprox(C[i], C[i+1], rtol=1e-3) && return true  # if poles are different by less than 0.1%, return true
     end
 
     return false
