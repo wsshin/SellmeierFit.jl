@@ -4,6 +4,32 @@ const GUESS_MARGIN = 0.05
 
 fit_sellmeier(λ, ε, N::Integer) = fit_sellmeier(λ, ε, Val(N))
 
+function has_similar(C::AbsVecReal)  # assume C is sorted
+    for i = 1:length(C)-1
+        C[i]≈C[i+1] && return true
+    end
+
+    return false
+end
+
+function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
+                       ε::AbsVecFloat, # measured relative permittivities (= squared refractive indices)
+                       Nmax::Integer=6)
+    me = fit_sellmeier(λ, ε, Val(1))  # me: model and error
+    for N = 2:Nmax
+        me′ = fit_sellmeier(λ, ε, Val(N))
+        if me′.err > me.err  # if more terms than necessary are used, error starts to increase
+            break
+        elseif has_similar(me′.mdl.C)  # terms with similar poles are unnecessary
+            break
+        else
+            me = me′
+        end
+    end
+
+    return me
+end
+
 function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
                        ε::AbsVecFloat,  # measured relative permittivities (= squared refractive indices)
                        ::Val{N}  # number of terms in Sellmeier model
