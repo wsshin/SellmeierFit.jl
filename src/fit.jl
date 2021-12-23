@@ -29,8 +29,10 @@ function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
         end
     end
 
-    sm = SellmeierModel(SVec(B), SVec(C))
-    
+    SB, SC = SVec(B), SVec(C)
+    p = sortperm(SC)  # SVector
+    sm = SellmeierModel(SB[p], SC[p])
+
     return (mdl=sm, err=err_min)
 end
 
