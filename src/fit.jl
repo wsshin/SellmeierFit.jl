@@ -4,23 +4,24 @@ const GUESS_MARGIN = 0.05
 
 fit_sellmeier(λ, ε, N::Integer) = fit_sellmeier(λ, ε, Val(N))
 
-function has_similar(λres::AbsVecReal)  # assume λres is sorted
+function has_similar(λres::AbsVecReal; rtol=1e-3)  # assume λres is sorted
     for i = 1:length(λres)-1
-        isapprox(λres[i], λres[i+1]; rtol=1e-3) && return true  # if poles are different by less than 0.1%, return true
+        isapprox(λres[i], λres[i+1]; rtol) && return true  # if poles are different by less than 0.1%, return true
     end
 
     return false
 end
 
 function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
-                       ε::AbsVecFloat; # measured relative permittivities (= squared refractive indices)
-                       Nmax::Integer=10)
+                       ε::AbsVecFloat;  # measured relative permittivities (= squared refractive indices)
+                       Nmax::Integer=10,  # maximum number of terms in Sellmeier equation
+                       rtol_λres=1e-3)  # relative tolerance to distinguish λres
     me = fit_sellmeier(λ, ε, Val(1))  # me: model and error
     for N = 2:Nmax
         me′ = fit_sellmeier(λ, ε, Val(N))
         if me′.err > me.err  # if more terms than necessary are used, error starts to increase
             break
-        elseif has_similar(me′.mdl.λres)  # terms with similar poles are unnecessary
+        elseif has_similar(me′.mdl.λres; rtol=rtol_λres)  # terms with similar poles are unnecessary
             break
         else
             me = me′
