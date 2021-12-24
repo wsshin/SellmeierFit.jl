@@ -4,9 +4,9 @@ const GUESS_MARGIN = 0.05
 
 fit_sellmeier(λ, ε, N::Integer) = fit_sellmeier(λ, ε, Val(N))
 
-function has_similar(C::AbsVecReal)  # assume C is sorted
-    for i = 1:length(C)-1
-        isapprox(C[i], C[i+1], rtol=1e-3) && return true  # if poles are different by less than 0.1%, return true
+function has_similar(λres::AbsVecReal)  # assume λres is sorted
+    for i = 1:length(λres)-1
+        isapprox(λres[i], λres[i+1]; rtol=1e-3) && return true  # if poles are different by less than 0.1%, return true
     end
 
     return false
@@ -20,7 +20,7 @@ function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
         me′ = fit_sellmeier(λ, ε, Val(N))
         if me′.err > me.err  # if more terms than necessary are used, error starts to increase
             break
-        elseif has_similar(me′.mdl.C)  # terms with similar poles are unnecessary
+        elseif has_similar(me′.mdl.λres)  # terms with similar poles are unnecessary
             break
         else
             me = me′
@@ -42,22 +42,22 @@ function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
     λnorm = λ ./ λ₀
 
     err_min = Inf
-    B = @MVector zeros(N)
-    C = @MVector zeros(N)
+    str = @MVector zeros(N)
+    λres = @MVector zeros(N)
     for Nₙ = 0:N
         Nₚ = N - Nₙ
         fit = fit_sellmeier_impl(λnorm, ε, Nₙ, Nₚ)
         err = sqrt(sum(abs2, fit.resid) / Nλ)  # RMS error
         if err < err_min
-            B .= @view(fit.param[1:N])  # entries of B are dimensionless, so no need to unnormalize them
-            C .= @view(fit.param[N+1:2N]) .* λ₀  # entries of C are wavelengths, so unnormalize them
+            str .= @view(fit.param[1:N])  # entries of str are dimensionless, so no need to unnormalize them
+            λres .= @view(fit.param[N+1:2N]) .* λ₀  # entries of λres are wavelengths, so unnormalize them
             err_min = err
         end
     end
 
-    SB, SC = SVec(B), SVec(C)
-    p = sortperm(SC)  # SVector
-    sm = SellmeierModel(SB[p], SC[p])
+    str′, λres′ = SVec(str), SVec(λres)
+    p = sortperm(λres′)  # SVec
+    sm = SellmeierModel(str′[p], λres′[p])  # arguments are SVec
 
     return (mdl=sm, err=err_min)
 end
@@ -79,9 +79,9 @@ function fit_sellmeier_impl(λnorm::AbsVecFloat, ε::AbsVecFloat,
 
     # Perform fitting.
     fit = curve_fit((λ,p)->(BC = reshape(p,:,2);
-                            B = Ref(@view(BC[:,1]));
-                            C = Ref(@view(BC[:,2]));
-                            sellmeier_model.(λ, B, C)),
+                            str = Ref(@view(BC[:,1]));
+                            λres = Ref(@view(BC[:,2]));
+                            sellmeier_model.(λ, str, λres)),
                     λnorm, ε, p₀)
 
     return fit
