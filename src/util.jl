@@ -1,7 +1,6 @@
 @enum SpectralVariable WAVELENGTH FREQUENCY ENERGY
 for ins in instances(SpectralVariable); @eval export $(Symbol(ins)); end  # export all instances
 
-
 # Read a file containing λ and n as the first and second column, and return them.
 function read(uri::String;  # location of CSV file containing λ, n, and possibly k columns
               s_var::SpectralVariable=WAVELENGTH,
