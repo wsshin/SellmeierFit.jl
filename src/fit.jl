@@ -13,7 +13,7 @@ function has_similar(C::AbsVecReal)  # assume C is sorted
 end
 
 function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
-                       ε::AbsVecFloat, # measured relative permittivities (= squared refractive indices)
+                       ε::AbsVecFloat; # measured relative permittivities (= squared refractive indices)
                        Nmax::Integer=10)
     me = fit_sellmeier(λ, ε, Val(1))  # me: model and error
     for N = 2:Nmax
