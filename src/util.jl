@@ -8,8 +8,30 @@ function read(uri::String;  # location of CSV file containing λ, n, and possibl
               s_col::Integer=1,  # column index of domain quantity
               n_col::Integer=2,  # column index of refractive index
               kwargs...)  # keyword arguments for CSV.read; can be used to read .txt
+    local df
     if splitpath(uri)[1]=="https:"
-        df = CSV.read(Downloads.download(uri), DataFrame; kwargs...)
+        try
+            print("First attempt to download from $uri...  ")
+            df = CSV.read(Downloads.download(uri), DataFrame; kwargs...)
+            println("Succeeds!")
+        catch
+            try
+                println("Fails.")
+                print("Second attempt to download from $uri...  ")
+                df = CSV.read(Downloads.download(uri), DataFrame; kwargs...)
+                println("Succeeds!")
+            catch
+                try
+                    println("Fails.")
+                    print("Final attempt to download from $uri...  ")
+                    df = CSV.read(Downloads.download(uri), DataFrame; kwargs...)
+                    println("Succeeds!")
+                catch e
+                    println("Fails.")
+                    @error e
+                end
+            end
+        end
     else
         df = CSV.read(uri, DataFrame; kwargs...)
     end
