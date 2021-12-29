@@ -5,6 +5,7 @@ using CairoMakie
 ## Main section
 # Load a set of measured refractive index data from https://RefractiveIndex.info.
 uri = "https://refractiveindex.info/data_csv.php?datafile=data/main/SiO2/Malitson.yml"  # link to RefractiveIndex.info's SiO₂
+# uri = "https://refractiveindex.info/data_csv.php?datafile=data/main/Si3N4/Luke.yml"  # link to RefractiveIndex.info's Si₃N₄
 (; λ, ε) = SellmeierFit.read(uri)
 
 # Fit the loaded data to the Sellmeier equation.
