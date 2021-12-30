@@ -1,14 +1,35 @@
 export SellmeierModel, sellmeier_model
 
-# Sellmeier model representing ε(λ) = 1 + ∑ᵢ [strᵢ λ² / (λ² - λresᵢ²)].
 
+"""
+    SellmeierModel{N}
+
+Sellmeier model representing the Sellmeier equation ε(λ) = 1 + ∑ᵢ [Bᵢ λ² / (λ² - Cᵢ)], where
+the sum is for `1 ≤ i ≤ N`.
+
+# Fields
+- `str::SVector{N,Float64}`: `str[i]` is the strength of the `i`th term in the Sellmeier equation; corresponds to Bᵢ.
+- `λres::SVector{N,Float64}`: `λres[i]` is the resonance wavelength of the `i`th term in the Sellmeier equation; corresponds to √Cᵢ.
+"""
 struct SellmeierModel{N}
     str::SFloat{N}  # strength of terms; typically written str in equation
     λres::SFloat{N}  # resonance wavelength of terms; typically written √λres in equation
 end
 
+"""
+    Base.length(sm::SellmeierModel)
+
+Return the number of terms in the sum of the Sellmeier equation represented by the given
+`SellmeierModel`.
+"""
 Base.length(sm::SellmeierModel{N}) where {N} = N
 
+"""
+    (::SellmeierModel)(λ::Real)
+
+Evaluate the Sellmeier equation represented by the given `SellmeierModel` at a wavelngth `λ`
+in units of meters.
+"""
 (sm::SellmeierModel)(λ::Real) = sellmeier_model(λ, sm.str, sm.λres)
 
 # Returns the relative permittivity ε = n² at a wavelength λ following the Sellmeier model.

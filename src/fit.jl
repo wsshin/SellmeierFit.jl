@@ -12,6 +12,13 @@ function has_similar(λres::AbsVecReal; rtol=1e-3)  # assume λres is sorted
     return false
 end
 
+"""
+    fit_sellmeier(λ, ε; Nmax=10, rtol_λres=1e-3)
+
+Fit the dielectric constant data `ε` sampled at wavelengths `λ` to the Sellmeier equation
+with up to `Nmax` terms.  If `λres` of different terms have relative difference less than
+`rtol_λres`, they are considered the same term and merged.
+"""
 function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
                        ε::AbsVecFloat;  # measured relative permittivities (= squared refractive indices)
                        Nmax::Integer=10,  # maximum number of terms in Sellmeier equation
@@ -31,6 +38,13 @@ function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
     return me
 end
 
+"""
+    fit_sellmeier(λ, ε, Val(N))
+
+Fit the dielectric constant data `ε` sampled at wavelengths `λ` to the Sellmeier equation
+with exactly `N` terms.  Out of the `N` terms, some are below and the other are above the
+range of `λ`.
+"""
 function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
                        ε::AbsVecFloat,  # measured relative permittivities (= squared refractive indices)
                        ::Val{N}  # number of terms in Sellmeier model
@@ -47,7 +61,7 @@ function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
     λres = @MVector zeros(N)
     for Nₙ = 0:N
         Nₚ = N - Nₙ
-        fit = fit_sellmeier_impl(λnorm, ε, Nₙ, Nₚ)
+        fit = fit_sellmeier(λnorm, ε, Nₙ, Nₚ)
         err = sqrt(sum(abs2, fit.resid) / Nλ)  # RMS error
         if err < err_min
             str .= @view(fit.param[1:N])  # entries of str are dimensionless, so no need to unnormalize them
@@ -63,9 +77,15 @@ function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
     return (mdl=sm, err=err_min)
 end
 
-function fit_sellmeier_impl(λnorm::AbsVecFloat, ε::AbsVecFloat,
-                            Nₙ::Integer,  # number of terms with poles below λ range
-                            Nₚ::Integer)  # number of terms with poles above λ range
+"""
+    fit_sellmeier(λ, ε, Nₙ, Nₚ)
+
+Fit the dielectric constant data `ε` sampled at wavelengths `λ` to the Sellmeier equation
+with exactly `Nₙ` terms below and `Nₚ` terms above the range of `λ`.
+"""
+function fit_sellmeier(λnorm::AbsVecFloat, ε::AbsVecFloat,
+                       Nₙ::Integer,  # number of terms with poles below λ range
+                       Nₚ::Integer)  # number of terms with poles above λ range
     issorted(λnorm) || @error "λnorm = $λnorm should be sorted."
 
     N = Nₙ + Nₚ

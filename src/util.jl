@@ -1,30 +1,50 @@
+"""
+    SpectralVariable
+
+Used to specify the type of the spectral variable which the refractive index is a function
+of.  The available instances are `WAVELENGTH` for wavelength, `FREQUENCY` for frequency, and
+`ENERGY` for photon energy.
+"""
 @enum SpectralVariable WAVELENGTH FREQUENCY ENERGY
 for ins in instances(SpectralVariable); @eval export $(Symbol(ins)); end  # export all instances
 
-# Read a file containing λ and n as the first and second column, and return them.
-function read(uri::String;  # location of CSV file containing λ, n, and possibly k columns
+"""
+    read(path; <keyword arguments>)
+
+Read the refractive index file at `path`, and return the wavelength `λ` and the dielectric
+constant vector `ε` as a named tuple.
+
+# Arguments
+- `path::String`: the path of the refractive index file; usually `*.csv`, but it can be any file readable by `CSV.read()`, such as `*.txt`.
+- `s_var::SpectralVariable=WAVELENGTH`: `WAVELENGTH`, `FREQUENCY`, or `ENERGY` if the refractive index file describes refractive index as a function of wavelength, frequency, or photon energy.
+- `unit_prefix::Real=micro`: the prefix to multiply to the values of the spectral variable to convert their units to the SI units.  For example, `1e-6` for wavelengths in units of µm; `1.602176643` for photon energies in units of eV.
+- `s_col::Integer=1`: the index of the spectral variable column in the refractive index file.
+- `n_col::Integer=2`: the index of the refractive index column in the refractive index file.
+- `kwargs...`: the keyword arguments to pass to `CSV.read()`
+"""
+function read(path::String;  # location of CSV file containing λ, n, and possibly k columns
               s_var::SpectralVariable=WAVELENGTH,
               unit_prefix::Real=micro,  # e.g., micro for μm; tera for THz; e⁺ for eV
               s_col::Integer=1,  # column index of domain quantity
               n_col::Integer=2,  # column index of refractive index
               kwargs...)  # keyword arguments for CSV.read; can be used to read .txt
     local df
-    if splitpath(uri)[1]=="https:"
+    if splitpath(path)[1]=="https:"
         try
-            print("First attempt to download from $uri...  ")
-            df = CSV.read(Downloads.download(uri), DataFrame; kwargs...)
+            print("First attempt to download from $path...  ")
+            df = CSV.read(Downloads.download(path), DataFrame; kwargs...)
             println("Succeeds!")
         catch
             try
                 println("Fails.")
-                print("Second attempt to download from $uri...  ")
-                df = CSV.read(Downloads.download(uri), DataFrame; kwargs...)
+                print("Second attempt to download from $path...  ")
+                df = CSV.read(Downloads.download(path), DataFrame; kwargs...)
                 println("Succeeds!")
             catch
                 try
                     println("Fails.")
-                    print("Final attempt to download from $uri...  ")
-                    df = CSV.read(Downloads.download(uri), DataFrame; kwargs...)
+                    print("Final attempt to download from $path...  ")
+                    df = CSV.read(Downloads.download(path), DataFrame; kwargs...)
                     println("Succeeds!")
                 catch e
                     println("Fails.")
@@ -33,11 +53,11 @@ function read(uri::String;  # location of CSV file containing λ, n, and possibl
             end
         end
     else
-        df = CSV.read(uri, DataFrame; kwargs...)
+        df = CSV.read(path, DataFrame; kwargs...)
     end
 
     num_col = size(df, 2)
-    num_col≥2 || @error "Data at $uri contains $num_col columns, but should contain at least two columns corresponding to measurement domain λ and refractive index n."
+    num_col≥2 || @error "Data at $path contains $num_col columns, but should contain at least two columns corresponding to measurement domain λ and refractive index n."
     dom = df[:,s_col] .* unit_prefix
     n = df[:,n_col]
     ε = n.^2
