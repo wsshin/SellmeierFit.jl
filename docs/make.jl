@@ -17,5 +17,6 @@ makedocs(
 
 deploydocs(
     repo = "github.com/wsshin/SellmeierFit.jl.git",
+    devbranch = "main",  # see https://github.com/JuliaDocs/Documenter.jl/issues/1443#issuecomment-735905544
     push_preview = true
 )
