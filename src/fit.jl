@@ -1,6 +1,6 @@
 export fit_sellmeier
 
-const GUESS_MARGIN = 0.05
+const GUESS_MARGIN = 0.05  # how much λres guesses are separated from range of measured λ
 
 fit_sellmeier(λ, ε, N::Integer) = fit_sellmeier(λ, ε, Val(N))
 
