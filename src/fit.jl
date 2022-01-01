@@ -49,32 +49,18 @@ function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
                        ε::AbsVecFloat,  # measured relative permittivities (= squared refractive indices)
                        ::Val{N}  # number of terms in Sellmeier model
                        ) where {N}
-    Nλ = length(λ)
-
-    # Normaize λ.
-    λₙ, λₚ = λ[1], λ[end]
-    λ₀ = √(λₙ*λₚ)
-    λnorm = λ ./ λ₀
-
+    local mdl_min
     err_min = Inf
-    str = @MVector zeros(N)
-    λres = @MVector zeros(N)
     for Nₙ = 0:N
         Nₚ = N - Nₙ
-        fit = fit_sellmeier(λnorm, ε, Nₙ, Nₚ)
-        err = sqrt(sum(abs2, fit.resid) / Nλ)  # RMS error
+        (; mdl, err) = fit_sellmeier(λ, ε, Nₙ, Nₚ)
         if err < err_min
-            str .= @view(fit.param[1:N])  # entries of str are dimensionless, so no need to unnormalize them
-            λres .= @view(fit.param[N+1:2N]) .* λ₀  # entries of λres are wavelengths, so unnormalize them
+            mdl_min = mdl
             err_min = err
         end
     end
 
-    str′, λres′ = SVec(str), SVec(λres)
-    p = sortperm(λres′)  # SVec
-    sm = SellmeierModel(str′[p], λres′[p])  # arguments are SVec
-
-    return (mdl=sm, err=err_min)
+    return (mdl=mdl_min, err=err_min)
 end
 
 """
@@ -83,12 +69,19 @@ end
 Fit the dielectric constant data `ε` sampled at wavelengths `λ` to the Sellmeier equation
 with exactly `Nₙ` terms below and `Nₚ` terms above the range of `λ`.
 """
-function fit_sellmeier(λnorm::AbsVecFloat, ε::AbsVecFloat,
+function fit_sellmeier(λ::AbsVecFloat,
+                       ε::AbsVecFloat,
                        Nₙ::Integer,  # number of terms with poles below λ range
                        Nₚ::Integer)  # number of terms with poles above λ range
-    issorted(λnorm) || @error "λnorm = $λnorm should be sorted."
+    issorted(λ) || @error "λ = $λ should be sorted."
 
     N = Nₙ + Nₚ
+
+    # Normaize λ.
+    λₙ, λₚ = λ[1], λ[end]
+    λ₀ = √(λₙ*λₚ)
+    λnorm = λ ./ λ₀
+    Nλ = length(λ)
 
     # Create guess parameters.
     cₙ, cₚ = (1-GUESS_MARGIN)λnorm[1], (1+GUESS_MARGIN)λnorm[end]
@@ -105,5 +98,11 @@ function fit_sellmeier(λnorm::AbsVecFloat, ε::AbsVecFloat,
                             sellmeier_model.(λ, str, λres)),
                     λnorm, ε, p₀)
 
-    return fit
+    str = @view(fit.param[1:N])  # entries of str are dimensionless, so no need to unnormalize them
+    λres = @view(fit.param[N+1:2N]) .* λ₀  # entries of λres are wavelengths, so unnormalize them
+    err = sqrt(sum(abs2, fit.resid) / Nλ)  # RMS error
+
+    sm = SellmeierModel(str, λres)
+
+    return (mdl=sm, err=err)
 end
