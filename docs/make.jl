@@ -7,8 +7,8 @@ makedocs(
     sitename = "SellmeierFit.jl",
     pages = Any[
         "Home" => "index.md"
-        "Tutorials" => "tutorial.md"
-        "Types and Functions" => "type_fun.md"
+        "Tutorials" => "tutorials.md"
+        "Types and Functions" => "types_funs.md"
     ]
     # strict = true,
     # clean = true,
