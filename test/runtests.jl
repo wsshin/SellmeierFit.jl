@@ -4,3 +4,4 @@ using Test
 
 include("read.jl")
 include("model.jl")
+include("fit.jl")
