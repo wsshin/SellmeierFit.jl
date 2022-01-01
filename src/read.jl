@@ -25,7 +25,7 @@ constant vector `ε` as a named tuple.
 function read(path::String;  # location of CSV file containing λ, n, and possibly k columns
               s_var::SpectralVariable=WAVELENGTH,
               unit_prefix::Real=micro,  # e.g., micro for μm; tera for THz; e⁺ for eV
-              s_col::Integer=1,  # column index of domain quantity
+              s_col::Integer=1,  # column index of spectral variable
               n_col::Integer=2,  # column index of refractive index
               kwargs...)  # keyword arguments for CSV.read; can be used to read .txt
     local df
@@ -57,7 +57,7 @@ function read(path::String;  # location of CSV file containing λ, n, and possib
     end
 
     num_col = size(df, 2)
-    num_col≥2 || @error "Data at $path contains $num_col columns, but should contain at least two columns corresponding to measurement domain λ and refractive index n."
+    num_col≥2 || @error "Data at $path contains $num_col columns, but should contain at least two columns corresponding to spectral variable λ and refractive index n."
     dom = df[:,s_col] .* unit_prefix
     n = df[:,n_col]
     ε = n.^2
