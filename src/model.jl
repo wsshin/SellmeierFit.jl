@@ -38,4 +38,4 @@ in units of meters.
 # The fitting equation is ε (= n²) rather than n, because ε is sometimes evaluated negative
 # during the optimization procedure; n = √ε is not defined for real negative ε.
 sellmeier_model(λ::Real, str::AbsVecReal, λres::AbsVecReal) =
-    1.0 + mapreduce((strᵢ,λresᵢ) -> strᵢ * λ^2 / (λ^2 - λresᵢ^2), +, str, λres)
+    1.0 + mapreduce((strᵢ,λresᵢ) -> strᵢ / (1.0 - (λresᵢ/λ)^2), +, str, λres)

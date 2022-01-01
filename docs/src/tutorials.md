@@ -57,7 +57,7 @@ Concrete example scripts are included in the `example/` directory.  Here is the 
 ![SiO₂](assets/SiO₂.png)
 Note that the fitting Sellmeier equation passes through all the data points almost exactly.  The calculated fitting parameters are
 ```julia-repl
-B = [0.6961663000453854, 0.40794259995459653, 0.8974793999998972]
-√C = [0.06840430000254781, 0.1162414000017247, 9.896160999999749]
+B = [0.6961663000454741, 0.40794259995450777, 0.897479399999896]
+√C = [0.06840430000255329, 0.11624140000172782, 9.896160999999745]
 ```
 and agree well with the values shown in the Dispersion formula section [here](https://refractiveindex.info/?shelf=main&book=SiO2&page=Malitson).
