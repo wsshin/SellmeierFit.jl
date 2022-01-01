@@ -1,5 +1,5 @@
 # Types and Functions
-## Index
+## Index of all types and functions
 ```@index
 ```
 
