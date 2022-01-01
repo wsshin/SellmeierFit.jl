@@ -17,7 +17,7 @@
 [codecov-img]: http://codecov.io/github/wsshin/SellmeierFit.jl/coverage.svg?branch=main
 [codecov-url]: http://codecov.io/github/wsshin/SellmeierFit.jl?branch=main
 
-*SellmeierFit* reads the refractive index data of a lossless material and calculates the optimal fitting Sellmeier equation.  The main contributions of the package are
+*SellmeierFit* reads the refractive index data of a lossless material and calculates the optimal fitting [Sellmeier equation](https://en.wikipedia.org/wiki/Sellmeier_equation).  The main contributions of the package are
 - the determination of good initial guesses of the Sellmeier equation parameters considering the material is lossless, and
 - the determination of the optimal number of terms in the Sellmeier equation.
 
