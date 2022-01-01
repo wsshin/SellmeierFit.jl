@@ -58,16 +58,16 @@ function read(path::String;  # location of CSV file containing λ, n, and possib
 
     num_col = size(df, 2)
     num_col≥2 || @error "Data at $path contains $num_col columns, but should contain at least two columns corresponding to spectral variable λ and refractive index n."
-    dom = df[:,s_col] .* unit_prefix
+    s = df[:,s_col] .* unit_prefix
     n = df[:,n_col]
     ε = n.^2
 
     if s_var==WAVELENGTH
-        λ = dom
-    elseif s_var==FREQUENCY
-        λ = c₀ ./ dom  # λ = c₀ / ν
-    else  # s_var==ENERGY
-        λ = ℎc₀ ./ dom  # λ = c₀ / ν = hc₀ / hν = ℎc₀ / E
+        λ = s
+    elseif s_var==FREQUENCY  # s = ν
+        λ = c₀ ./ s  # λ = c₀ / ν
+    else  # s_var==ENERGY; s = E
+        λ = ℎc₀ ./ s  # λ = c₀ / ν = hc₀ / hν = ℎc₀ / E
     end
 
     # If sorted in descending order, reverse it.
