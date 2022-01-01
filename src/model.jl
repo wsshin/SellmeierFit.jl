@@ -16,6 +16,8 @@ struct SellmeierModel{N}
     λres::SFloat{N}  # resonance wavelength of terms; typically written √λres in equation
 end
 
+SellmeierModel(str::AbsVecReal, λres::AbsVecReal) = (N = length(str); SellmeierModel(SFloat{N}(str), SFloat{N}(λres)))
+
 """
     Base.length(sm::SellmeierModel)
 
