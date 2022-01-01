@@ -14,9 +14,11 @@ the sum is for `1 ≤ i ≤ N`.
 struct SellmeierModel{N}
     str::SFloat{N}  # strength of terms; typically written str in equation
     λres::SFloat{N}  # resonance wavelength of terms; typically written √λres in equation
+
+    SellmeierModel{N}(str::SReal{N}, λres::SReal{N}) where {N} = (p = sortperm(λres); new(str[p], λres[p]))
 end
 
-SellmeierModel(str::AbsVecReal, λres::AbsVecReal) = (N = length(str); SellmeierModel(SFloat{N}(str), SFloat{N}(λres)))
+SellmeierModel(str::AbsVecReal, λres::AbsVecReal) = (N = length(str); SellmeierModel{N}(SFloat{N}(str), SFloat{N}(λres)))
 
 """
     Base.length(sm::SellmeierModel)
