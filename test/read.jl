@@ -1,6 +1,6 @@
 @testset "read" begin
     dir = @__DIR__
-    file = dir * "/../example/data/Malitson.csv"
+    file = joinpath(dir,  "..", "example", "data", "Malitson.csv")
     r0 = SellmeierFit.read(file, unit_prefix=1.0)
 
     r1 = SellmeierFit.read(file, unit_prefix=1.0, s_col=2, n_col=1)

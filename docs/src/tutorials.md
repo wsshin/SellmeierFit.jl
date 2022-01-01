@@ -6,17 +6,17 @@
 ### From a CSV file
 Suppose a CSV file named `refindex.csv` in the present working directory contains wavelengths ``λ`` in units of µm and the corresponding refractive indices ``n`` as the first and second columns, respectively.  The following code stores wavelengths in units of meters (not µm) and dielectric constants in variables `λ` and `ε` via [property destructuring of `NamedTuple`](https://julialang.org/blog/2021/11/julia-1.7-highlights/#property_destructuring):
 ```julia
-(; λ, ε) = SellmeierFit.read("./refindex.csv")
+(; λ, ε) = SellmeierFit.read("refindex.csv")
 ```
 `λ` and `ε` can be equally obtained by
 ```julia
-result = SellmeierFit.read("./refindex.csv")
+result = SellmeierFit.read("refindex.csv")
 λ = result.λ
 ε = result.ε
 ```
 or
 ```julia
-result = SellmeierFit.read("./refindex.csv")
+result = SellmeierFit.read("refindex.csv")
 λ = result[1]
 ε = result[2]
 ```
