@@ -5,7 +5,7 @@ using CairoMakie
 ## Main section
 # Load a set of measured refractive index data from Malitson.txt.
 dir = @__DIR__
-path = dir * "/Malitson.txt"
+path = dir * "/data/Malitson.txt"
 (; λ, ε) = SellmeierFit.read(path, header=2)
 
 # Fit the loaded data to the Sellmeier equation.
