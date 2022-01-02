@@ -1,6 +1,6 @@
 # SellmeierFit.jl
 
-*A Julia package for fitting measured refractive indices of a material to the Sellmeier equation.*
+*Julia package to fit lossless refractive index data to the Sellmeier equation.*
 
 ## Overview of the Sellmeier equation
 The Sellmeier equation is a widely used equation describing refractive index ``n`` as a function of wavelength ``λ``.  It is used in the wavelength range where the material is lossless (i.e., ``k(λ) = 0`` for complex refractive index ``n(λ) - ⅈ \, k(λ)``).  The equation is typically expressed as
