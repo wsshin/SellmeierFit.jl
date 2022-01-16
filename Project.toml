@@ -13,7 +13,7 @@ SimpleConstants = "6ca440b6-64d6-4b6c-88af-e5d091cb43b1"
 
 [compat]
 AbbreviatedTypes = "^0.2.1"
-CSV = "^0.9.11"
+CSV = "^0.9.11, 0.10"
 DataFrames = "^1.3.0"
 LsqFit = "^0.12.1"
 SimpleConstants = "^0.1.3"
