@@ -48,7 +48,7 @@ function read(path::String;  # location of CSV file containing λ, n, and possib
                     println("Succeeds!")
                 catch e
                     println("Fails.")
-                    @error e
+                    throw(e)
                 end
             end
         end
