@@ -1,7 +1,7 @@
 name = "SellmeierFit"
 uuid = "cb4c0f5c-2214-40eb-8da0-53ca8e9a3192"
 authors = ["Wonseok Shin <wsshin97@gmail.com>"]
-version = "0.3.2"
+version = "0.3.3"
 
 [deps]
 AbbreviatedTypes = "1766def0-c946-4dda-a59e-d0d07f8410f7"
