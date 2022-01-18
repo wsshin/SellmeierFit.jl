@@ -1,5 +1,5 @@
 using SellmeierFit
-using Downloads: RequestError
+using Downloads
 using SimpleConstants
 using Test
 
