@@ -102,7 +102,7 @@ function fit_sellmeier(λ::AbsVecFloat,
     λres = @view(fit.param[N+1:2N]) .* λ₀  # entries of λres are wavelengths, so unnormalize them
     err = sqrt(sum(abs2, fit.resid) / Nλ)  # RMS error
 
-    sm = SellmeierModel(str, λres)
+    mdl = SellmeierModel(str, λres)
 
-    return (mdl=sm, err=err)
+    return (; mdl, err)
 end

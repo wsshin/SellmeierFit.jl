@@ -77,5 +77,5 @@ function read(path::String;  # location of CSV file containing λ, n, and possib
         reverse!(ε)
     end
 
-    return (λ=λ, ε=ε)
+    return (; λ, ε)
 end
