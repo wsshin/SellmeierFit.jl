@@ -49,18 +49,18 @@ function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
                        ε::AbsVecFloat,  # measured relative permittivities (= squared refractive indices)
                        ::Val{N}  # number of terms in Sellmeier model
                        ) where {N}
-    local mdl_min
+    local me
     err_min = Inf
     for Nₙ = 0:N
         Nₚ = N - Nₙ
-        (; mdl, err) = fit_sellmeier(λ, ε, Nₙ, Nₚ)
-        if err < err_min
-            mdl_min = mdl
-            err_min = err
+        me′ = fit_sellmeier(λ, ε, Nₙ, Nₚ)
+        if me′.err < err_min
+            err_min = me′.err
+            me = me′
         end
     end
 
-    return (mdl=mdl_min, err=err_min)
+    return me
 end
 
 """
