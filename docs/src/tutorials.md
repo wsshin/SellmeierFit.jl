@@ -81,7 +81,7 @@ Note that the fitting Sellmeier equation passes through all the data points almo
 
 ```@example from_csv
 println("B = $(mdl.str)")  # hide
-println("√C = $(mdl.λres ./ micro)")  # hide
+println("√C (µm) = $(mdl.λres ./ micro)")  # hide
 ```
 
 and agree well with the values shown in the Dispersion formula section [here](https://refractiveindex.info/?shelf=main&book=SiO2&page=Malitson).

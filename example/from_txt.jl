@@ -15,7 +15,7 @@ path = dir * "/data/Malitson.txt"
 # The calculated fit parameters are the same as those shown in RefractiveIndex.info's
 # Dispersion formula section.
 println("B = $(mdl.str)")
-println("√C = $(mdl.λres ./ micro)")
+println("√C (µm) = $(mdl.λres ./ micro)")
 println("Error between data and fit = $err")
 
 # Visualize the measured data and fit Sellmeier equation; note that n = √ε.
