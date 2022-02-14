@@ -22,7 +22,7 @@ with up to `Nmax` terms.  If `λres` of different terms have relative difference
 function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
                        ε::AbsVecFloat;  # measured relative permittivities (= squared refractive indices)
                        Nmax::Integer=10,  # maximum number of terms in Sellmeier equation
-                       rtol_λres=1e-3)  # relative tolerance to distinguish λres
+                       rtol_λres::Real=1e-3)  # relative tolerance to distinguish λres
     me = fit_sellmeier(λ, ε, Val(1))  # me: model and error
     for N = 2:Nmax
         me′ = fit_sellmeier(λ, ε, Val(N))
