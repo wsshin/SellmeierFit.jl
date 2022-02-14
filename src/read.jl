@@ -9,13 +9,12 @@ of.  The available instances are `WAVELENGTH` for wavelength, `FREQUENCY` for fr
 for ins in instances(SpectralVariable); @eval export $(Symbol(ins)); end  # export all instances
 
 """
-    read(path; <keyword arguments>)
+    read(path::String; <keyword arguments>)
 
 Read the refractive index file at `path`, and return the wavelength `λ` and the dielectric
 constant vector `ε` as a named tuple.
 
-# Arguments
-- `path::String`: the path of the refractive index file; usually `*.csv`, but it can be any file readable by `CSV.read()`, such as `*.txt`.
+# Keywords
 - `s_var::SpectralVariable=WAVELENGTH`: `WAVELENGTH`, `FREQUENCY`, or `ENERGY` if the refractive index file describes refractive index as a function of wavelength, frequency, or photon energy.
 - `unit_prefix::Real=micro`: the prefix to multiply to the values of the spectral variable to convert their units to the SI units.  For example, `1e-6` for wavelengths in units of µm; `1.602176643` for photon energies in units of eV.
 - `s_col::Integer=1`: the index of the spectral variable column in the refractive index file.
