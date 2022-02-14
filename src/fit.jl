@@ -13,7 +13,7 @@ function has_similar(λres::AbsVecReal; rtol=1e-3)  # assume λres is sorted
 end
 
 """
-    fit_sellmeier(λ, ε; Nmax=10, rtol_λres=1e-3)
+    fit_sellmeier(λ::AbsVecFloat, ε::AbsVecFloat; Nmax::Integer=10, rtol_λres::Real=1e-3)
 
 Fit the dielectric constant data `ε` sampled at wavelengths `λ` to the Sellmeier equation
 with up to `Nmax` terms.  If `λres` of different terms have relative difference less than
@@ -39,7 +39,7 @@ function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
 end
 
 """
-    fit_sellmeier(λ, ε, Val(N))
+    fit_sellmeier(λ::AbsVecFloat, ε::AbsVecFloat, Val(N))
 
 Fit the dielectric constant data `ε` sampled at wavelengths `λ` to the Sellmeier equation
 with exactly `N` terms.  Out of the `N` terms, some are below and the other are above the
@@ -64,7 +64,7 @@ function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
 end
 
 """
-    fit_sellmeier(λ, ε, Nₙ, Nₚ)
+    fit_sellmeier(λ::AbsVecFloat, ε::AbsVecFloat, Nₙ::Integer, Nₚ::Integer)
 
 Fit the dielectric constant data `ε` sampled at wavelengths `λ` to the Sellmeier equation
 with exactly `Nₙ` terms below and `Nₚ` terms above the range of `λ`.
