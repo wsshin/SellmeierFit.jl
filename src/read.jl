@@ -11,8 +11,8 @@ for ins in instances(SpectralVariable); @eval export $(Symbol(ins)); end  # expo
 """
     read(path::String; <keyword arguments>)
 
-Read the refractive index file at `path`, and return the wavelength `λ` and the dielectric
-constant vector `ε` as a named tuple.
+Read the refractive index file at `path`, and return the wavelength vector `λ` and the 
+dielectric constant vector `ε` as a named tuple.
 
 # Keywords
 - `s_var::SpectralVariable=WAVELENGTH`: `WAVELENGTH`, `FREQUENCY`, or `ENERGY` if the refractive index file describes refractive index as a function of wavelength, frequency, or photon energy.
