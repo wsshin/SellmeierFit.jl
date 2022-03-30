@@ -1,6 +1,6 @@
 # SellmeierFit.jl
 
-*Julia package to fit lossless refractive index data to the Sellmeier equation*
+*Julia package for fitting lossless refractive index data to the Sellmeier equation*
 
 | **Documentation** | **Build Status** |
 |:-----------------:|:----------------:|
