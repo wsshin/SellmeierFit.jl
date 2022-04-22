@@ -42,7 +42,7 @@ end
     fit_sellmeier(λ::AbsVecFloat, ε::AbsVecFloat, Val(N))
 
 Fit the dielectric constant data `ε` sampled at wavelengths `λ` to the Sellmeier equation
-with exactly `N` terms.  Out of the `N` terms, some are below and the other are above the
+with exactly `N` terms.  Among the `N` terms, some are below and the other are above the
 range of `λ`.
 """
 function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
