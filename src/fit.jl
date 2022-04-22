@@ -2,8 +2,6 @@ export fit_sellmeier
 
 const GUESS_MARGIN = 0.05  # how much λres guesses are separated from range of measured λ
 
-fit_sellmeier(λ, ε, N::Integer) = fit_sellmeier(λ, ε, Val(N))
-
 function has_similar(λres::AbsVecReal; rtol=1e-3)  # assume λres is sorted
     for i = 1:length(λres)-1
         isapprox(λres[i], λres[i+1]; rtol) && return true  # if poles are different by less than 0.1%, return true
@@ -19,6 +17,7 @@ Fit the dielectric constant data `ε` sampled at wavelengths `λ` to the Sellmei
 with up to `Nmax` terms.  If `λres` of different terms have relative difference less than
 `rtol_λres`, they are considered the same term and merged.
 """
+fit_sellmeier(λ::AbsVecReal, ε::AbsVecReal; kwargs...) = fit_sellmeier(float(λ), float(ε); kwargs...)
 function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
                        ε::AbsVecFloat;  # measured relative permittivities (= squared refractive indices)
                        Nmax::Integer=10,  # maximum number of terms in Sellmeier equation
@@ -45,6 +44,8 @@ Fit the dielectric constant data `ε` sampled at wavelengths `λ` to the Sellmei
 with exactly `N` terms.  Among the `N` terms, some are below and the other are above the
 range of `λ`.
 """
+fit_sellmeier(λ::AbsVecReal, ε::AbsVecReal, N::Integer) = fit_sellmeier(λ, ε, Val(N))
+fit_sellmeier(λ::AbsVecReal, ε::AbsVecReal, ::Val{N}) where {N} = fit_sellmeier(float(λ), float(ε), Val(N))
 function fit_sellmeier(λ::AbsVecFloat,  # wavelengths where ε was measured
                        ε::AbsVecFloat,  # measured relative permittivities (= squared refractive indices)
                        ::Val{N}  # number of terms in Sellmeier model
@@ -69,6 +70,7 @@ end
 Fit the dielectric constant data `ε` sampled at wavelengths `λ` to the Sellmeier equation
 with exactly `Nₙ` terms below and `Nₚ` terms above the range of `λ`.
 """
+fit_sellmeier(λ::AbsVecReal, ε::AbsVecReal, Nₙ::Integer, Nₚ::Integer) = fit_sellmeier(float(λ), float(ε), Nₙ, Nₚ)
 function fit_sellmeier(λ::AbsVecFloat,
                        ε::AbsVecFloat,
                        Nₙ::Integer,  # number of terms with poles below λ range
