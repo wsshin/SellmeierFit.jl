@@ -6,7 +6,7 @@
 The Sellmeier equation is a widely used equation describing refractive index ``n`` as a function of wavelength ``λ``.  It is used in the wavelength range where the material is lossless (i.e., ``k(λ) = 0`` for complex refractive index ``n(λ) - ⅈ k(λ)``).  The equation is typically expressed as
 
 ```math
-ε_\mathrm{r}(λ) = n(λ)^2 = 1 + \sum_{i} \frac{B_i λ^2}{λ^2 - C_i},
+ε_\mathrm{r}(λ) = n(λ)^2 = 1 + \sum_{i=1}^N \frac{B_i λ^2}{λ^2 - C_i},
 ```
 
 where ``ε_\mathrm{r}(λ) \equiv ε(λ) / ε_0`` is relative electric permittivity, also known as dielectric constant.
@@ -16,7 +16,7 @@ The [Wikipedia article](https://en.wikipedia.org/wiki/Sellmeier_equation) claims
 The above microscopic picture describing the interaction between an external _E_-field and material is called the *Lorentz model*, and the resulting expression for dielectric constant is
 
 ```math
-ε_\mathrm{r}(ω) = 1 + \sum_{i}\frac{ω_{\mathrm{p},i}^2}{ω_{0,i}^2 - ω^2 + ⅈ ω Γ_i},
+ε_\mathrm{r}(ω) = 1 + \sum_{i=1}^N\frac{ω_{\mathrm{p},i}^2}{ω_{0,i}^2 - ω^2 + ⅈ ω Γ_i},
 ```
 
 where ``ω_{\mathrm{p},i} = \sqrt{n_i q_\mathrm{e}^2 / m_\mathrm{e} ε_0}`` is plasma frequency determined by electron density ``n_i`` associated with the ``i``th equilibrium site, electron charge ``q_\mathrm{e}``, and electron mass ``m_\mathrm{e}``.  (The plus sign in front of ``ⅈ ω Γ_i`` in the denominator is when the harmonic time dependence of the external _E_-field is ``e^{+ⅈ ω t}``; if the time dependence is ``e^{-ⅈ ω t}``, the minus sign is used.)
@@ -24,12 +24,12 @@ where ``ω_{\mathrm{p},i} = \sqrt{n_i q_\mathrm{e}^2 / m_\mathrm{e} ε_0}`` is p
 The Sellmeier equation is the simplification of the Lorentz model in the regime where damping can be ignored such that refractive index becomes lossless.  This happens when ``ω ≫ Γ_i``, for which we have
 
 ```math
-ε_\mathrm{r}(ω) ≈ 1 + \sum_{i}\frac{ω_{\mathrm{p},i}^2}{ω_{0,i}^2 - ω^2}.
+ε_\mathrm{r}(ω) ≈ 1 + \sum_{i=1}^N\frac{ω_{\mathrm{p},i}^2}{ω_{0,i}^2 - ω^2}.
 ```
 
 This is exactly of the form of the Sellmeier equation as ``ω = 2πc_0 / λ``.  Therefore, the Sellmeier equation is nothing but the Lorentz model in the lossless regime.
 
-## Fitting data to the Sellmeier equation
+## How SellmeierFit.jl works
 Even though the Sellmeier equation is widely used formula to which refractive indices are fitted, the author found that finding the coefficients ``B_i`` and ``C_i`` was not straightforward.  The author tried [`LsqFit.jl`](https://github.com/JuliaNLSolvers/LsqFit.jl), but some reasonable initial guesses for these parameters didn't produce a successful fit.
 
 It turns out to be crucial to recognize that the Sellmeier equation is the lossless version of the Lorentz model as described earlier.  The lossless-ness requires that good initial guesses for ``\sqrt{C_i}`` be placed outside the wavelength range of measurement, because loss is maximized around ``λ = \sqrt{C_i}``, or ``ω = ω_{0,i}`` equivalently, in the Lorentz model.  Once this requirement is satisfied, simple application of `LsqFit.jl` produces a successful fit.
