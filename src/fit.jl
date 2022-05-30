@@ -3,7 +3,7 @@ export fit_sellmeier
 const GUESS_MARGIN = 0.05  # how much λres guesses are separated from range of measured λ
 
 function has_similar(λres::AbsVecReal; rtol=1e-3)  # assume λres is sorted
-    for i = 1:length(λres)-1
+    for i in eachindex(λres)[begin:end-1]
         isapprox(λres[i], λres[i+1]; rtol) && return true  # if poles are different by less than 0.1%, return true
     end
 
