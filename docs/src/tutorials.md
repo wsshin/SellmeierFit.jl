@@ -4,8 +4,53 @@ include("../../example/from_csv.jl")
 
 # Tutorials
 
+## Manual construction
+If you know the coefficients of the Sellmeier equation already, you can construct a corresponding `SellmeierModel` directly.  Here is an example for a three-term Sellmeier equation:
+
+```julia
+str = [0.696, 0.408, 0.897]  # strength of oscillators (B₁,B₂,B₃)
+λres = [0.0684e-6, 0.116e-6, 9.896e-6]  # resonance wavelengths in meters (√C₁,√C₂,√C₃)
+mdl = SellmeierModel(str, λres)
+```
+
+Once a `SellmeierModel` is constructed, the Sellmeier equation represented by the model can be evaluated by
+
+```julia
+mdl(1.55e-6)  # ε (or n²) at λ = 1.55 µm
+```
+
+If you would like to construct a Sellmeier model for a nondispersive material (which has a constant refractive index ``n`` for all wavelengths), simply call the constructor `SellmeierModel` with the constant dielectric constant ``ε_\mathrm{r} = n²`` as a sole argument:
+
+```julia
+εconst = 4.0  # n = √ε = 2.0
+mdl = SellmeierModel(εconst)  # mdl(λ) returns εconst for any λ
+```
+
+## Construction by fitting data to the Sellmeier equation
+If you have measured dielectric constant data at various wavelengths, you can construct `SellmeierModel` by fitting the data to the Sellmeier equation.  Suppose `ε` is a vector of measured dielectric constants and `λ` is a vector of measurement wavelengths in meters.  Fitting these data to the Sellmeier equation is performed by
+
+```julia
+(; mdl, err) = fit_sellmeier(λ, ε)
+```
+
+Here, `mdl` is an instance of `SellmeierModel` that has `str` and `λres` as fields; they represent the strengths and resonance wavelengths of the terms in the Sellmeier equation, and correspond to ``B_i``'s and ``\sqrt{C_i}``'s, resectively.  `err` is the root-mean-square error of the entries of `ε` with respect to the fitting Sellmeier equation.
+
+The above code determines the optimal number ``N`` of terms in the Sellmeier equation.  There are a few variant usages of `fit_sellmeier()`.  If you would like to find the optimal Sellmeier equation with a specific number of terms, you can specify ``N`` manually by
+
+```julia
+(; mdl, err) = fit_sellmeier(λ, ε, N)
+```
+
+Furthermore, you can specify the numbers ``N_n`` and ``N_p`` of terms with ``\sqrt{C_i}`` below and above the wavelength range of measurement, respectively, by 
+
+```julia
+(; mdl, err) = fit_sellmeier(λ, ε, Nₙ, Nₚ)
+```
+
+Note that ``\sqrt{C_i}``'s in the Sellmeier equation should lie either below or above the wavelength range of measurement, as discussed in [How SellmeierFit.jl works](@ref).  Hence ``N_n + N_p = N``.
+
 ## Reading refractive index data
-`SellmeierFit.read()` reads refractive index data, and outputs wavelengths ``λ`` and dielectric constants ``ε_\mathrm{r}``.  The function supports various keyword arguments to read refractive index data in various formats.  See [`SellmeierFit.read()`](@ref) for the details of available keyword arguments.
+The refractive index data to construct a Sellmeier equation with are often stored in a file.  `SellmeierFit.read()` is a convenience function that reads refractive index data from a file (or even a website), and outputs wavelengths ``λ`` and dielectric constants ``ε_\mathrm{r}`` to pass to the `SellmeierModel` constructor discussed above.  The function supports various keyword arguments to read refractive index data in various formats.  See [`SellmeierFit.read()`](@ref) for the details of available keyword arguments.
 
 ### From a CSV file
 Suppose a CSV file named `refindex.csv` in the present working directory contains wavelengths ``λ`` in units of µm and the corresponding refractive indices ``n`` as the first and second columns, respectively.  The following code stores wavelengths in units of meters (not µm) and dielectric constants in variables `λ` and `ε` via [property destructuring of `NamedTuple`](https://julialang.org/blog/2021/11/julia-1.7-highlights/#property_destructuring):
@@ -58,29 +103,6 @@ Websites such as [RefractiveIndex.info](https://refractiveindex.info) provide re
 ```julia
 (; λ, ε) = SellmeierFit.read("https://refractiveindex.info/tmp/data/main/SiO2/Malitson.csv")
 ```
-
-## Fitting data to the Sellmeier equation
-Once you have a vector `λ` of wavelengths in units of meters and a vector `ε` of dielectric constants, fitting these data to the Sellmeier equation is performed by
-
-```julia
-(; mdl, err) = fit_sellmeier(λ, ε)
-```
-
-Here, `mdl` is an instance of `SellmeierModel` that has `str` and `λres` as fields; they represent the strengths and resonance wavelengths of the terms in the Sellmeier equation, and correspond to ``B_i``'s and ``\sqrt{C_i}``'s, resectively.  `err` is the root-mean-square error of the entries of `ε` with respect to the fitting Sellmeier equation.
-
-The above code determines the optimal number ``N`` of terms in the Sellmeier equation.  There are a few variant usages of `fit_sellmeier()`.  If you would like to find the optimal Sellmeier equation with a specific number of terms, you can specify ``N`` manually by
-
-```julia
-(; mdl, err) = fit_sellmeier(λ, ε, N)
-```
-
-Furthermore, you can specify the numbers ``N_n`` and ``N_p`` of terms with ``\sqrt{C_i}`` below and above the wavelength range of measurement, respectively, by 
-
-```julia
-(; mdl, err) = fit_sellmeier(λ, ε, Nₙ, Nₚ)
-```
-
-Note that ``\sqrt{C_i}``'s in the Sellmeier equation should lie either below or above the wavelength range of measurement, as discussed in [How SellmeierFit.jl works](@ref).  Hence ``N_n + N_p = N``.
 
 ## Concrete examples
 Concrete example scripts are included in the `example/` directory.  Here is the plot generated by `example/from_csv.jl`:
