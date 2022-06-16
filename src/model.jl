@@ -19,6 +19,7 @@ struct SellmeierModel{N}
 end
 
 SellmeierModel(str::AbsVecReal, λres::AbsVecReal) = (N = length(str); SellmeierModel{N}(SFloat{N}(str), SFloat{N}(λres)))
+SellmeierModel(εconst::Real) = (str = SFloat{1}(εconst-1); λres = SFloat{1}(0.0); SellmeierModel(str,λres))
 
 """
     Base.length(sm::SellmeierModel)
